@@ -1,3 +1,3 @@
 # Netwatch
 
-A real time network mobitoring alert system
+A real time network monitoring alert system

@@ -1,0 +1,18 @@
+# compiled files
+bin/
+*.class
+
+# runtime files
+logs/
+*.log
+data/devices.txt
+
+# Eclipse local settings (optional, see note)
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+*.iml
+.idea/

@@ -1,4 +1,3 @@
-
 package server;
 
 import java.io.BufferedReader;
@@ -261,8 +260,9 @@ public class ClientHandler implements Runnable
                     + device.time
             );
         }
-    }
 
+        send("END_SNAPSHOT");
+    }
     private void sendRecentLogs()
     {
         List<String> logs = LogManager.getRecentLogs(50);

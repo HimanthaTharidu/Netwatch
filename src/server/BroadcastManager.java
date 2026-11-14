@@ -18,7 +18,8 @@ public class BroadcastManager {
     }
 
     public void broadcast(String line){
-        for (ClientHandler handler : clients){
+ 
+       for (ClientHandler handler : clients){
             handler.send(line);
         }
     }

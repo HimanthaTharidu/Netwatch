@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DeviceStorage
 {
-    private static final Path FILE = Path.of("data", "devices.txt");
+    private static final Path FILE = AppPaths.devicesFile();
 
     public static synchronized List<String> loadDevices()
     {

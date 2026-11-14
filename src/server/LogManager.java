@@ -13,7 +13,7 @@ import java.util.List;
 
 public class LogManager
 {
-    private static final Path LOG_FILE = Path.of("logs", "network.log");
+    private static final Path LOG_FILE = AppPaths.logFile();
 
     private static final DateTimeFormatter FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

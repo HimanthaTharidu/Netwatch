@@ -204,8 +204,10 @@ public class Dashboard {
         Thread connectionThread = new Thread(() -> {
 
             try {
+                String host = System.getProperty("netwatch.host", "127.0.0.1");
+                int port = Integer.parseInt(System.getProperty("netwatch.port", "5000"))
 
-                client = new NetWatchClient();
+                client = new NetWatchClient(host, port);
 
                 client.connect();
 

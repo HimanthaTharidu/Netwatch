@@ -21,8 +21,14 @@ public class NetWatchClient {
 
     private Consumer<String> messageHandler;
 
-    private final String host = "127.0.0.1";
-    private final int port = 5000;
+    private final String host;
+    private final int port;
+
+    public NetWatchClient(String host, int port){
+        this.host = host;
+        this.port = port;
+    }
+
 
     public synchronized void connect() throws IOException {
 

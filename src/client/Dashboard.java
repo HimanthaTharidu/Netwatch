@@ -25,6 +25,8 @@ public class Dashboard {
 
     private NetWatchClient client;
     private AlertManager alertManager;
+    private volatile boolean closing = false;
+    private Thread connectionThread;
 
     public Dashboard() {
 
@@ -37,6 +39,12 @@ public class Dashboard {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+
+                closing = true;
+
+                if (connectionThread != null) {
+                    connectionThread.interrupt();
+                }
 
                 if (client != null) {
                     client.disconnect();
@@ -201,39 +209,55 @@ public class Dashboard {
 
     private void connectToServer() {
 
-        Thread connectionThread = new Thread(() -> {
+        connectionThread = new Thread(() -> {
 
-            try {
-                String host = System.getProperty("netwatch.host", "127.0.0.1");
-                int port = Integer.parseInt(System.getProperty("netwatch.port", "5000"))
+            String serverHost = System.getProperty("netwatch.host", "127.0.0.1");
+            int serverPort = Integer.getInteger("netwatch.port", 5000);
 
-                client = new NetWatchClient(host, port);
+            client = new NetWatchClient(serverHost, serverPort);
 
-                client.connect();
+            while (!closing && !client.isConnected()) {
 
-                SwingUtilities.invokeLater(() -> {
-                    alertArea.append(
-                        "Connected to NetWatch server.\n"
-                    );
-                });
+                try {
 
-                client.startListening(message -> {
+                    client.connect();
+
+                } catch (IOException e) {
 
                     SwingUtilities.invokeLater(() -> {
-                        handleServerMessage(message);
+                        if (!closing) {
+                            alertArea.setText(
+                                "Connection failed: " + e.getMessage()
+                                + "\nRetrying in 5 seconds...\n"
+                            );
+                        }
                     });
 
-                });
-
-            } catch (IOException e) {
-
-                SwingUtilities.invokeLater(() -> {
-                    alertArea.append(
-                        "Connection failed: "
-                        + e.getMessage() + "\n"
-                    );
-                });
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException interrupted) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                }
             }
+
+            if (closing) {
+                client.disconnect();
+                return;
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                if (!closing) {
+                    alertArea.append("Connected to NetWatch server.\n");
+                }
+            });
+
+            client.startListening(message -> {
+                SwingUtilities.invokeLater(() -> {
+                    handleServerMessage(message);
+                });
+            });
 
         });
 
@@ -241,7 +265,6 @@ public class Dashboard {
         connectionThread.setDaemon(true);
         connectionThread.start();
     }
-
     private void handleServerMessage(String message) {
 
         String[] parts = message.split("\\|", -1);
@@ -694,3 +717,4 @@ public class Dashboard {
         );
     }
 }
+

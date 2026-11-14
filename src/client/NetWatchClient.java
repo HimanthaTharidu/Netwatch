@@ -100,6 +100,10 @@ public class NetWatchClient {
                 } finally {
 
                     closeConnection();
+                    if (!manuallyDisconnected && messageHandler != null)
+                    {
+                        messageHandler.accept("CONNECTION|DISCONNECTED");
+                    }
                 }
 
                 if (!manuallyDisconnected) {

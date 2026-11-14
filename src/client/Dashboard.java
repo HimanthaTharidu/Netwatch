@@ -354,10 +354,18 @@ public class Dashboard {
                 break;
 
             case "CONNECTION":
+            	
 
                 if (parts.length == 2 &&
-                        parts[1].equals("RECONNECTED")) {
-
+                        parts[1].equals("DISCONNECTED"))
+                {
+                    alertArea.append(
+                        "Disconnected from NetWatch server.\n"
+                    );
+                }
+                else if (parts.length == 2 &&
+                        parts[1].equals("RECONNECTED"))
+                {
                     alertArea.append(
                         "Reconnected to NetWatch server.\n"
                     );
@@ -366,12 +374,15 @@ public class Dashboard {
                     refreshStatistics();
 
                     if (logArea != null && logFrame != null
-                            && logFrame.isVisible()) {
+                            && logFrame.isVisible())
+                    {
                         logArea.setText("Connection restored.\n");
                     }
                 }
 
                 break;
+
+                
 
             case "ERROR": {
 
